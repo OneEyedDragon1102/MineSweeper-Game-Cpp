@@ -2,6 +2,7 @@
 #define nl cout<<"\n"
 using namespace std;
 
+
 int MINES, COL, ROW;
 
 void setMines(vector <vector <char>> &realBoard){
@@ -21,12 +22,29 @@ void setMines(vector <vector <char>> &realBoard){
 void printBoard(vector <vector <char>> &playingBoard, int MOVES){
     cout<<"Mines : "<<MINES;nl;
     cout<<"Moves : "<<MOVES;nl;
-    // for(vector <char> i : realBoard){
-    //     for(char j : i){
-    //         cout<<j<<" ";
-    //     }nl;
-    // }
-
+     
+    cout<<"    ";
+    for (int i = 0; i < ROW; i++){
+        if(i < 8){
+            cout<<i+1<<"  ";
+        }
+        else{
+            cout<<i+1<<" ";
+        }
+    }
+    nl;nl;
+ 
+    for (int i = 0; i < ROW; i++){
+        if(i < 9){
+            cout<<i+1<<"   ";
+        }
+        else{
+            cout<<i+1<<"  ";
+        }
+        for (int j = 0; j <COL; j++){
+            cout<<playingBoard[i][j]<<"  ";
+        }nl;
+    }
 }
 
 void play(){
@@ -39,6 +57,7 @@ void play(){
 
     while(gameplay){
         printBoard(playingBoard, MOVES);
+        break;
     }
 }
 
