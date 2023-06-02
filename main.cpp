@@ -1,9 +1,18 @@
 #include<bits/stdc++.h>
+#include<conio.h>
 #define nl cout<<"\n"
 using namespace std;
 
 
 int MINES, COL, ROW;
+
+bool isMine(int &x, int &y, vector <vector <char>> &realBoard){
+    if(realBoard[x-1][y-1] == '*'){
+        return true;
+    }
+
+    return false;
+}
 
 void setMines(vector <vector <char>> &realBoard){
     int k = 0;
@@ -20,6 +29,7 @@ void setMines(vector <vector <char>> &realBoard){
 }
 
 void printBoard(vector <vector <char>> &playingBoard, int MOVES){
+    cout<<"\nStatus of Board : \n";
     cout<<"Mines : "<<MINES;nl;
     cout<<"Moves : "<<MOVES;nl;
      
@@ -47,16 +57,74 @@ void printBoard(vector <vector <char>> &playingBoard, int MOVES){
     }
 }
 
+void userMove(int &x, int &y, bool z){
+    cout<<"\n1. Input";
+    cout<<"\n2. Flag a mine";
+    cout<<"\n3. Exit";
+    cout<<"\n>>";    
+    int n;
+    cin>>n;
+    switch (n)
+    {
+    case 1:
+        initRow:
+        cout<<"Enter row number : ";
+        cin>>x;
+        if(x < 1 || x > ROW){
+            cout<<"Row out of bounds\n";
+            goto initRow;
+        }
+        initCol:
+        cout<<"Enter column number : ";
+        cin>>y;
+        if(y < 1 || y > COL){
+            cout<<"Row out of bounds\n";
+            goto initCol;
+        }
+        break;
+    
+    default:
+        break;
+    }
+}
+
+void replaceMine(int &x, int &y, vector <vector <char>> &realBoard){
+    for(int i = 0; i < ROW; i++){
+        for(int j = 0; j < COL; j++){
+            if(realBoard[i][j] != '*'){
+                realBoard[i][j] = '*';
+                realBoard[x][y] = '-';
+                return;
+            }
+        }
+    }
+}
+
 void play(){
     bool gameplay = true; // while the game is being played and not over
     vector <vector <char> > realBoard(ROW, vector <char> (COL, '-')), playingBoard(ROW,vector <char> (COL, '-'));
 
-    int MOVES = (ROW * COL) - MINES, x, y; 
+    int MOVES = 0, x, y; 
 
     setMines(realBoard);
-
     while(gameplay){
         printBoard(playingBoard, MOVES);
+        
+        int x, y, z = 0;
+        userMove(x, y, gameplay);
+        if(z == false){
+            cout<<"\nThanks for playing :)";
+            break;
+        }
+
+        if(MOVES == 0){
+            if(isMine(x, y, realBoard)){
+                replaceMine(x, y, realBoard);
+            }
+        }
+
+        MOVES++;
+        
         break;
     }
 }
