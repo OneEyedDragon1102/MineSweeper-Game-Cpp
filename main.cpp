@@ -1,13 +1,20 @@
 #include<bits/stdc++.h>
-#include<conio.h>
 #define nl cout<<"\n"
 using namespace std;
 
 
 int MINES, COL, ROW;
 
-bool isMine(int &x, int &y, vector <vector <char>> &realBoard){
-    if(realBoard[x-1][y-1] == '*'){
+bool validIndex(int x, int y){
+    if( (x >= 0 && x <= ROW) && (y >= 0 && y <= COL)){
+        return true;
+    }
+
+    return false;
+}
+
+bool isMine(int x, int y, vector <vector <char>> &realBoard){
+    if(realBoard[x][y] == '*'){
         return true;
     }
 
@@ -57,37 +64,6 @@ void printBoard(vector <vector <char>> &playingBoard, int MOVES){
     }
 }
 
-void userMove(int &x, int &y, bool z){
-    cout<<"\n1. Input";
-    cout<<"\n2. Flag a mine";
-    cout<<"\n3. Exit";
-    cout<<"\n>>";    
-    int n;
-    cin>>n;
-    switch (n)
-    {
-    case 1:
-        initRow:
-        cout<<"Enter row number : ";
-        cin>>x;
-        if(x < 1 || x > ROW){
-            cout<<"Row out of bounds\n";
-            goto initRow;
-        }
-        initCol:
-        cout<<"Enter column number : ";
-        cin>>y;
-        if(y < 1 || y > COL){
-            cout<<"Row out of bounds\n";
-            goto initCol;
-        }
-        break;
-    
-    default:
-        break;
-    }
-}
-
 void replaceMine(int &x, int &y, vector <vector <char>> &realBoard){
     for(int i = 0; i < ROW; i++){
         for(int j = 0; j < COL; j++){
@@ -100,19 +76,133 @@ void replaceMine(int &x, int &y, vector <vector <char>> &realBoard){
     }
 }
 
+int countMines(int x, int y, vector <vector <char>> &realBoard){
+    int cnt = 0;
+    if(validIndex(x-1, y)){
+        if(isMine(x-1, y, realBoard)){
+            cnt++;
+        }
+    }
+    if(validIndex(x+1, y)){
+        if(isMine(x+1, y, realBoard)){
+            cnt++;
+        }
+    }
+    if(validIndex(x-1, y-1)){
+        if(isMine(x-1, y-1, realBoard)){
+            cnt++;
+        }
+    }
+    if(validIndex(x+1, y+1)){
+        if(isMine(x+1, y+1, realBoard)){
+            cnt++;
+        }
+    }
+    if(validIndex(x, y+1)){
+        if(isMine(x, y+1, realBoard)){
+            cnt++;
+        }
+    }
+    if(validIndex(x, y-1)){
+        if(isMine(x, y-1, realBoard)){
+            cnt++;
+        }
+    }
+    if(validIndex(x-1, y+1)){
+        if(isMine(x-1, y+1, realBoard)){
+            cnt++;
+        }
+    }
+    if(validIndex(x+1, y-1)){
+        if(isMine(x+1, y-1, realBoard)){
+            cnt++;
+        }
+    }
+    
+    return cnt;
+}
+
+bool util(int &x, int &y, vector <vector <char>> &playingBoard, vector <vector <char>> &realBoard, int &MOVES){
+    if(realBoard[x][y] == '*'){
+        playingBoard[x][y] == '*';
+        printBoard(playingBoard, MOVES);
+        return false;
+    }
+    else{
+        int mineCount = countMines(x, y, realBoard);
+    }
+}
+
 void play(){
     bool gameplay = true; // while the game is being played and not over
     vector <vector <char> > realBoard(ROW, vector <char> (COL, '-')), playingBoard(ROW,vector <char> (COL, '-'));
 
-    int MOVES = 0, x, y; 
+    int MOVES = 0; 
 
     setMines(realBoard);
     while(gameplay){
         printBoard(playingBoard, MOVES);
         
-        int x, y, z = 0;
-        userMove(x, y, gameplay);
-        if(z == false){
+        int x, y, n;
+        cout<<"\n1. Input";
+        cout<<"\n2. Flag a mine";
+        cout<<"\n3. Exit";
+        cout<<"\n>>";    
+        cin>>n;
+        switch (n)
+        {
+        case 1:
+            initRow:
+            cout<<"Enter row number : ";
+            cin>>x;
+            if(x < 1 || x > ROW){
+                cout<<"Row out of bounds\n";
+                goto initRow;
+            }
+            initCol:
+            cout<<"Enter column number : ";
+            cin>>y;
+            if(y < 1 || y > COL){
+                cout<<"Row out of bounds\n";
+                goto initCol;
+            }
+            x--, y--;
+
+            if(MOVES == 0){
+                if(isMine(x, y, realBoard)){
+                    replaceMine(x, y, realBoard);
+                }    
+            }
+
+            MOVES++;
+            gameplay = util(x, y, playingBoard, realBoard, MOVES);
+            break;
+        case 2:
+            initFlagRow:
+            cout<<"Enter row number : ";
+            cin>>x;
+            if(x < 1 || x > ROW){
+                cout<<"Row out of bounds\n";
+                goto initFlagRow;
+            }
+            initFlagCol:
+            cout<<"Enter column number : ";
+            cin>>y;
+            if(y < 1 || y > COL){
+                cout<<"Row out of bounds\n";
+                goto initFlagCol;
+            }
+
+        
+            x--, y--;
+            if(realBoard[x][y] == '*'){
+                MINES--;
+            }
+
+        default:
+            break;
+        }
+        if(gameplay == false){
             cout<<"\nThanks for playing :)";
             break;
         }
