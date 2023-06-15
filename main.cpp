@@ -2,7 +2,6 @@
 #define nl cout<<"\n"
 using namespace std;
 
-
 int MINES, COL, ROW;
 
 bool validIndex(int x, int y){
