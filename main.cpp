@@ -5,7 +5,7 @@ using namespace std;
 int MINES, COL, ROW;
 
 bool validIndex(int x, int y){
-    if( (x >= 0 && x <= ROW) && (y >= 0 && y <= COL)){
+    if( (x >= 0 && x < ROW) && (y >= 0 && y < COL)){
         return true;
     }
 
@@ -125,14 +125,16 @@ bool util(int x, int y, vector <vector <char>> &playingBoard, vector <vector <ch
     if (playingBoard[x][y] != '-'){
         return (false);
     }
-
     if(realBoard[x][y] == '*'){
         playingBoard[x][y] == '*';
         printBoard(playingBoard, MOVES);
+        
         return false;
     }
     else{
+        cout<<"here";
         int mineCount = countMines(x, y, realBoard);
+        cout<<mineCount;
         playingBoard[x][y] = '0' + mineCount;
         if (!mineCount){
             if (validIndex (x-1, y)){
@@ -188,7 +190,20 @@ bool util(int x, int y, vector <vector <char>> &playingBoard, vector <vector <ch
 
 }
 
+bool checkEmpty_(vector <vector <char>> &playingBoard){
+    for(vector <char> i : playingBoard){
+        for(char j : i){
+            if(j == '-'){
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
 void play(){
+    srand(time(0));
     bool gameplay = true; // while the game is being played and not over
     vector <vector <char> > realBoard(ROW, vector <char> (COL, '-')), playingBoard(ROW,vector <char> (COL, '-'));
 
@@ -196,6 +211,12 @@ void play(){
 
     setMines(realBoard);
     while(gameplay){
+        if(MINES == 0 && checkEmpty_(playingBoard)){
+            cout<<"Congrats you won";nl;
+            cout<<"MOVES : "<<MOVES;
+            break;
+        }
+        initGame:
         printBoard(playingBoard, MOVES);
         
         int x, y, n;
@@ -228,7 +249,7 @@ void play(){
                     replaceMine(x, y, realBoard);
                 }    
             }
-            
+
             gameplay = util(x, y, playingBoard, realBoard, MOVES);
             
             break;
@@ -251,14 +272,33 @@ void play(){
         
             x--, y--;
             if(realBoard[x][y] == '*'){
+                nl;
+                cout<<"You found a mine";
+                playingBoard[x][y] = '*';
                 MINES--;
             }
+            else{
+                if(MOVES == 0){
+                    if(isMine(x, y, realBoard)){
+                        replaceMine(x, y, realBoard);
+                    }    
+                }
+                gameplay = util(x, y, playingBoard, realBoard, MOVES);
+            }
 
+            break;
+        case 3:
+            gameplay = false;
+            break;
         default:
+            cout<<"Choose valid option";
+            goto initGame;
             break;
         }
+
         if(gameplay == false){
             cout<<"\nThanks for playing :)";
+
             break;
         }
 
@@ -269,8 +309,8 @@ void play(){
         }
 
         MOVES++;
-
     }
+    printBoard(realBoard, MOVES);
 }
 
 void chooseLevel(){
