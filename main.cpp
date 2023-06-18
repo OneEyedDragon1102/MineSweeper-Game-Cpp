@@ -121,7 +121,11 @@ int countMines(int x, int y, vector <vector <char>> &realBoard){
     return cnt;
 }
 
-bool util(int &x, int &y, vector <vector <char>> &playingBoard, vector <vector <char>> &realBoard, int &MOVES){
+bool util(int x, int y, vector <vector <char>> &playingBoard, vector <vector <char>> &realBoard, int MOVES){
+    if (playingBoard[x][y] != '-'){
+        return (false);
+    }
+
     if(realBoard[x][y] == '*'){
         playingBoard[x][y] == '*';
         printBoard(playingBoard, MOVES);
@@ -129,7 +133,59 @@ bool util(int &x, int &y, vector <vector <char>> &playingBoard, vector <vector <
     }
     else{
         int mineCount = countMines(x, y, realBoard);
+        playingBoard[x][y] = '0' + mineCount;
+        if (!mineCount){
+            if (validIndex (x-1, y)){
+                if (!isMine (x-1, y, realBoard)){
+                   util(x-1, y, playingBoard, realBoard, MOVES);
+                }
+            }
+ 
+            if (validIndex (x+1, y)){
+                if (!isMine (x+1, y, realBoard)){
+                    util(x+1, y, playingBoard, realBoard, MOVES);
+                }
+            }
+ 
+            if (validIndex (x, y+1)){
+                if (!isMine (x, y+1, realBoard)){
+                    util(x, y+1, playingBoard, realBoard, MOVES);
+                }
+            }
+ 
+            if (validIndex (x, y-1)){
+                if (!isMine (x, y-1, realBoard)){
+                    util(x, y-1, playingBoard, realBoard, MOVES);
+                }
+            }
+ 
+            if (validIndex (x-1, y+1) == true){
+                if (isMine (x-1, y+1, realBoard) == false){
+                    util(x-1, y+1, playingBoard, realBoard, MOVES);
+                }
+            }
+ 
+            if (validIndex (x-1, y-1) == true){
+                if (isMine (x-1, y-1, realBoard) == false){
+                    util(x-1, y-1, playingBoard, realBoard, MOVES);
+                }
+            }
+ 
+            if (validIndex (x+1, y+1) == true){
+                if (isMine (x+1, y+1, realBoard) == false){
+                    util(x+1, y+1, playingBoard, realBoard, MOVES);
+                }
+            }
+ 
+            if (validIndex (x+1, y-1) == true){
+                if (isMine (x+1, y-1, realBoard) == false){
+                    util(x+1, y-1, playingBoard, realBoard, MOVES);
+                }
+            }
+        }
+        return true;
     }
+
 }
 
 void play(){
@@ -172,9 +228,9 @@ void play(){
                     replaceMine(x, y, realBoard);
                 }    
             }
-
-            MOVES++;
+            
             gameplay = util(x, y, playingBoard, realBoard, MOVES);
+            
             break;
         case 2:
             initFlagRow:
@@ -213,8 +269,7 @@ void play(){
         }
 
         MOVES++;
-        
-        break;
+
     }
 }
 
