@@ -1,3 +1,4 @@
+// MineSweeper Game 
 #include<bits/stdc++.h>
 #define nl cout<<"\n"
 using namespace std;
@@ -20,6 +21,7 @@ bool isMine(int x, int y, vector <vector <char>> &realBoard){
     return false;
 }
 
+//setting random mines on map
 void setMines(vector <vector <char>> &realBoard){
     int k = 0;
     while(k < MINES){
@@ -63,6 +65,7 @@ void printBoard(vector <vector <char>> &playingBoard, int MOVES){
     }
 }
 
+// replacinf first mine
 void replaceMine(int &x, int &y, vector <vector <char>> &realBoard){
     for(int i = 0; i < ROW; i++){
         for(int j = 0; j < COL; j++){
@@ -75,7 +78,8 @@ void replaceMine(int &x, int &y, vector <vector <char>> &realBoard){
     }
 }
 
-int countMines(int x, int y, vector <vector <char>> &realBoard){
+// counting adjacent mines
+int countMines(int x, int y, vector <vector <char>> &realBoard){ 
     int cnt = 0;
     if(validIndex(x-1, y)){
         if(isMine(x-1, y, realBoard)){
@@ -136,7 +140,7 @@ bool util(int x, int y, vector <vector <char>> &playingBoard, vector <vector <ch
         int mineCount = countMines(x, y, realBoard);
         cout<<mineCount;
         playingBoard[x][y] = '0' + mineCount;
-        if (!mineCount){
+        if (!mineCount){ // found an empty space or 0
             if (validIndex (x-1, y)){
                 if (!isMine (x-1, y, realBoard)){
                    util(x-1, y, playingBoard, realBoard, MOVES);
@@ -212,7 +216,7 @@ void play(){
     setMines(realBoard);
     while(gameplay){
         if(MINES == 0 && checkEmpty_(playingBoard)){
-            cout<<"Congrats you won";nl;
+            nl;nl;cout<<"Congrats you won";nl;
             cout<<"MOVES : "<<MOVES;
             break;
         }
@@ -249,7 +253,10 @@ void play(){
                     replaceMine(x, y, realBoard);
                 }    
             }
-
+            if(playingBoard[x][y] != '-' && playingBoard[x][y] != '*'){
+                MOVES--;
+                break;
+            }
             gameplay = util(x, y, playingBoard, realBoard, MOVES);
             
             break;
@@ -310,7 +317,6 @@ void play(){
 
         MOVES++;
     }
-    printBoard(realBoard, MOVES);
 }
 
 void chooseLevel(){
